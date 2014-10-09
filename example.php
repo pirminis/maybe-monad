@@ -82,3 +82,12 @@ $maybeOrder = new Maybe(null);
 
 var_dump($maybeOrder->getUser()->getName()->value('no value'));
 // result: string(8) "no value"
+
+
+// 8. using "empty" instead of "isset"
+$maybeNotEmptyString = new Maybe('');
+
+var_dump($maybeNotEmptyString->value('empty'));
+// result: string(0) ""
+var_dump($maybeNotEmptyString->value('empty', true));
+// result: string(3) "empty"
