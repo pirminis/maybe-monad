@@ -37,6 +37,16 @@ class Maybe
         return $this;
     }
 
+    public function __get($property)
+    {
+        if (!property_exists($this->subject, $property)) {
+            return new Maybe(null);
+        }
+
+        $this->subject = $this->subject->{$property};
+        return $this;
+    }
+
     /**
      * Get value.
      * @param  string $default Default value or something in case of null.
