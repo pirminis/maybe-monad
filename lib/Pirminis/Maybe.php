@@ -33,24 +33,27 @@ class Maybe
             return new Maybe(null);
         }
 
-        $this->subject = call_user_func_array([$this->subject, $method], $args);
-        return $this;
+        return new Maybe(call_user_func_array([$this->subject, $method], $args));
     }
 
+    /**
+     * For situations with properties.
+     * @param  string $property Property of an object.
+     * @return Pirminis\Maybe
+     */
     public function __get($property)
     {
         if (!property_exists($this->subject, $property)) {
             return new Maybe(null);
         }
 
-        $this->subject = $this->subject->{$property};
-        return $this;
+        return new Maybe($this->subject->{$property});
     }
 
     /**
      * Get value.
      * @param  string $default Default value or something in case of null.
-     * @return [type]          [description]
+     * @return mixed
      */
     public function value($default = '', $use_empty = false)
     {
