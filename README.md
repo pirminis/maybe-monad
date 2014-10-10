@@ -12,7 +12,7 @@ Composer:
 ```
 {
     "require": {
-        "pirminis/maybe-monad": "1.1"
+        "pirminis/maybe-monad": "1.2"
     },
     "repositories": [
         {
