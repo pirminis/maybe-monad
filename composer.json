@@ -1,15 +1,23 @@
 {
     "name": "pirminis/maybe-monad",
+    "type": "library",
     "description": "PHP monad library",
     "version": "1.0",
     "license": "MIT",
+    "keywords": ["monad", "safe"],
+    "homepage": "https://github.com/pirminis/maybe-monad",
     "authors": [
         {
             "name": "Jonas Staškevičius",
-            "homepage": "https://github.com/pirminis/maybe-monad"
+            "homepage": "https://github.com/pirminis"
         }
     ],
+    "require": {
+        "php": ">=5.4.0"
+    }
     "autoload": {
-        "classmap": ["lib/"]
+        "psr-0": {
+            "": "lib"
+        }
     }
 }
