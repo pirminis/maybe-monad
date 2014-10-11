@@ -26,5 +26,11 @@ Composer:
 # Examples
 Dont be a jerk and check `example.php`, it is simple and easy to understand.
 
+# Tests
+Use phpunit in project folder:
+```
+phpunit tests
+```
+
 # Bugs?
 I care $maybeCare = new Maybe(null); echo $maybeCare->value('that much');
