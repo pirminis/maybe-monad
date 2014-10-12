@@ -51,11 +51,12 @@ class Maybe
     }
 
     /**
-     * Get value.
-     * @param  string $default Default value or something in case of null.
+     * Extract value from monad.
+     * @param  string  $default    Default value or something in case of null.
+     * @param  boolean $use_empty  Should we use 'empty' instead of 'isset'?
      * @return mixed
      */
-    public function value($default = '', $use_empty = false)
+    public function val($default = '', $use_empty = false)
     {
         if ($use_empty) {
             return empty($this->subject) ? $default : $this->subject;

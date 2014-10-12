@@ -6,13 +6,13 @@ use Pirminis\Maybe;
 
 // 1. simple value
 $maybeInteger = new Maybe(123);
-var_dump($maybeInteger->value());
+var_dump($maybeInteger->val());
 // result: int(123)
 
 
 // 2. simple value that is null
 $maybeInteger = new Maybe(null);
-var_dump($maybeInteger->value(0));
+var_dump($maybeInteger->val(0));
 // result: int(0)
 
 
@@ -21,7 +21,7 @@ $obj = new stdClass();
 $obj->title = 'Me so horny';
 
 $maybeObj = new Maybe($obj);
-var_dump($maybeObj->value());
+var_dump($maybeObj->val());
 // result:
 // class stdClass#2 (1) {
 //   public $title =>
@@ -34,7 +34,7 @@ $obj = new stdClass();
 $obj->age = 28;
 
 $maybeObj = new Maybe($obj);
-var_dump($maybeObj->age->value(0));
+var_dump($maybeObj->age->val(0));
 // result: int(28)
 
 
@@ -42,7 +42,7 @@ var_dump($maybeObj->age->value(0));
 $obj = new stdClass();
 $maybeObj = new Maybe($obj);
 
-var_dump($maybeObj->name->value('property does not exist'));
+var_dump($maybeObj->name->val('property does not exist'));
 // result: string(23) "property does not exist"
 
 
@@ -73,21 +73,21 @@ class User
 $order = new Order();
 $maybeOrder = new Maybe($order);
 
-var_dump($maybeOrder->getUser()->getName()->value('no value'));
+var_dump($maybeOrder->getUser()->getName()->val('no value'));
 // result: string(4) "John"
 
 
 // 7. chaining non existing methods
 $maybeOrder = new Maybe(null);
 
-var_dump($maybeOrder->getUser()->getName()->value('no value'));
+var_dump($maybeOrder->getUser()->getName()->val('no value'));
 // result: string(8) "no value"
 
 
 // 8. using "empty" instead of "isset"
 $maybeNotEmptyString = new Maybe('');
 
-var_dump($maybeNotEmptyString->value('empty'));
+var_dump($maybeNotEmptyString->val('empty'));
 // result: string(0) ""
-var_dump($maybeNotEmptyString->value('empty', true));
+var_dump($maybeNotEmptyString->val('empty', true));
 // result: string(3) "empty"

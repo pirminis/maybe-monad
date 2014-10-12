@@ -33,4 +33,4 @@ phpunit tests
 ```
 
 # Bugs?
-I care $maybeCare = new Maybe(null); echo $maybeCare->value('that much');
+I `$maybeCare = new Maybe('that much'); echo $maybeCare->val('not that much');`
