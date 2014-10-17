@@ -13,13 +13,7 @@ Composer:
 {
     "require": {
         "pirminis/maybe-monad": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/pirminis/maybe-monad.git"
-        }
-    ]
+    }
 }
 ```
 
