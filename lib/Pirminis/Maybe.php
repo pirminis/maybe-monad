@@ -86,4 +86,28 @@ class Maybe implements \ArrayAccess
     {
         // monad should and will be immutable
     }
+
+    public function map(\Closure $closure)
+    {
+        $result = [];
+        $array = is_array($this->subject) ?
+                 $this->subject :
+                 [$this->subject];
+
+        foreach ($array as $key => $value) {
+            $array[$key] = $closure(new Maybe($value), new Maybe($key))->val();
+        }
+
+        return new Maybe(is_array($this->subject) ? $array : $array[0]);
+    }
+
+    public function some()
+    {
+        return !is_null($this->subject);
+    }
+
+    public function none()
+    {
+        return empty($this->subject);
+    }
 }
