@@ -97,3 +97,60 @@ var_dump($maybeNotEmptyString->val('empty'));
 // result: string(0) ""
 var_dump($maybeNotEmptyString->val('empty', true));
 // result: string(3) "empty"
+
+
+// 10. using 'map()' method of Maybe to adjust behaviour of (new) monad
+$luckyNumbers = new Maybe([1, 22, 45, 99]);
+$multipliedNumbers = $luckyNumbers->map(function($num) {
+    return new Maybe($num->val() * 100);
+});
+
+var_dump($multipliedNumbers->val());
+// result:
+// array(4) {
+//   [0] =>
+//   int(100)
+//   [1] =>
+//   int(2200)
+//   [2] =>
+//   int(4500)
+//   [3] =>
+//   int(9900)
+// }
+var_dump($multipliedNumbers[3]->val());
+// result: int(9900)
+
+// you can also nest maps
+$order = new Maybe(new Order(new User('John')));
+
+$name = $order->map(function($order) {
+    var_dump('Got order...');
+    return $order->getUser()->map(function($user) {
+        var_dump('Got user...');
+        return $user->getName()->map(function($name) {
+            var_dump('Got name...');
+            return $name;
+        });
+    });
+});
+
+var_dump($name->val());
+// result:
+// string(12) "Got order..."
+// string(11) "Got user..."
+// string(11) "Got name..."
+// string(4) "John"
+
+// 11. you can also use methods 'some()' and 'none()' to simple test if
+// monad's value is set (some) or empty (none)
+$name = new Maybe(null);
+var_dump($name->some());
+// bool(false)
+var_dump($name->none());
+// bool(true)
+
+$age = new Maybe(28);
+var_dump($age->some());
+// bool(true)
+var_dump($age->none());
+// bool(false)
