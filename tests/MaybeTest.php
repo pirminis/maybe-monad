@@ -132,6 +132,22 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedCallback, $callback->val());
         $this->assertSame($expectedValue, $callback->val()->__invoke());
     }
+
+    public function testEmptyArray()
+    {
+        $expectedValue = '';
+        $maybeArray = new Maybe(null);
+
+        $this->assertSame($expectedValue, $maybeArray['name']->val());
+    }
+
+    public function testMultiDimensionalArray()
+    {
+        $expectedValue = 'John';
+        $maybeArray = new Maybe(['person' => ['name' => 'John', 'age' => 28]]);
+
+        $this->assertSame($expectedValue, $maybeArray['person']['name']->val());
+    }
 }
 
 class User
