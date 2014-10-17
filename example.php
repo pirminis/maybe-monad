@@ -9,14 +9,20 @@ $maybeInteger = new Maybe(123);
 var_dump($maybeInteger->val());
 // result: int(123)
 
+// 2. accessing array elements
+$maybeArray = new Maybe(['person' => ['name' => 'John']]);
+var_dump($maybeArray['person']['name']->val());
+// result: string(4) "John"
+var_dump($maybeArray['oh, oh.']['what']->val('nope'));
+// result: string(4) "nope"
 
-// 2. simple value that is null
+// 3. simple value that is null
 $maybeInteger = new Maybe(null);
 var_dump($maybeInteger->val(0));
 // result: int(0)
 
 
-// 3. object
+// 4. object
 $obj = new stdClass();
 $obj->title = 'Me so horny';
 
@@ -29,7 +35,7 @@ var_dump($maybeObj->val());
 // }
 
 
-// 4. existing property
+// 5. existing property
 $obj = new stdClass();
 $obj->age = 28;
 
@@ -38,7 +44,7 @@ var_dump($maybeObj->age->val(0));
 // result: int(28)
 
 
-// 5. inexisting property
+// 6. inexisting property
 $obj = new stdClass();
 $maybeObj = new Maybe($obj);
 
@@ -46,7 +52,7 @@ var_dump($maybeObj->name->val('property does not exist'));
 // result: string(23) "property does not exist"
 
 
-// 6. chaining existing methods
+// 7. chaining existing methods
 class Order
 {
     public function getUser()
@@ -77,14 +83,14 @@ var_dump($maybeOrder->getUser()->getName()->val('no value'));
 // result: string(4) "John"
 
 
-// 7. chaining non existing methods
+// 8. chaining non existing methods
 $maybeOrder = new Maybe(null);
 
 var_dump($maybeOrder->getUser()->getName()->val('no value'));
 // result: string(8) "no value"
 
 
-// 8. using "empty" instead of "isset"
+// 9. using "empty" instead of "isset"
 $maybeNotEmptyString = new Maybe('');
 
 var_dump($maybeNotEmptyString->val('empty'));
