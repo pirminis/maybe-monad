@@ -9,7 +9,7 @@ namespace Pirminis;
  *
  * Handles chainable callabes like I handle your mom.
  */
-class Maybe
+class Maybe implements \ArrayAccess
 {
     protected $subject;
 
@@ -63,5 +63,27 @@ class Maybe
         }
 
         return is_null($this->subject) ? $default : $this->subject;
+    }
+
+    public function offsetGet($offset)
+    {
+        return new Maybe(isset($this->subject[$offset]) ?
+               $this->subject[$offset] :
+               null);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        // monad should and will be immutable
+    }
+
+    public function offsetExists($offset)
+    {
+        return isset($this->subject[$offset]);
+    }
+
+    public function offsetUnset($offset)
+    {
+        // monad should and will be immutable
     }
 }
