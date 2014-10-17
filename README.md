@@ -10,10 +10,8 @@ When accessing values, variables, properties, calling methods or even chaining m
 Composer:
 
 ```
-{
-    "require": {
-        "pirminis/maybe-monad": "dev-master"
-    }
+"require": {
+    "pirminis/maybe-monad": "dev-master"
 }
 ```
 
