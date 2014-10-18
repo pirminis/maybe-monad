@@ -2,7 +2,6 @@
     "name": "pirminis/maybe-monad",
     "type": "library",
     "description": "PHP monad library",
-    "version": "1.2.1",
     "license": "MIT",
     "keywords": ["monad", "safe"],
     "homepage": "https://github.com/pirminis/maybe-monad",
