@@ -13,6 +13,8 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     public function testMonadLaw1()
     {
         $f = function($v) {
+            // why "(new Maybe($v))" and not just "$v"?
+            // because we will use "$f" as if it had nothing to do with monads.
             return (new Maybe($v))->val() * 10;
         };
 
@@ -37,7 +39,8 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Law 3: monad(arg).map(f).map(g) == monad(arg).map(f=monad(arg).map(g))
+     * Law 3: monad(arg).map(f).map(g) == monad(arg).map(f(g))
+     * map(f) is monad, map(g) is monad, hence map(f(g)) is monad.
      */
     public function testMonadLaw3()
     {
@@ -63,6 +66,22 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedValue, $left->val());
         $this->assertSame($expectedValue, $right->val());
         $this->assertSame($left->val(), $right->val());
+        $this->assertInstanceOf('\Pirminis\Maybe', $left);
+        $this->assertInstanceOf('\Pirminis\Maybe', $right);
+    }
+
+    public function testConstructingMonadFromMonadWillGiveMonad()
+    {
+        $expectedValue = 'this is just a string';
+
+        $first_monad = new Maybe($expectedValue);
+        $second_monad = new Maybe($first_monad);
+
+        // due to PHP limitation we cannot return same monad passed into
+        // constructor, but we can compare values of both objects
+        // $this->assertSame($first_monad, $second_monad);
+
+        $this->assertSame($first_monad->val(), $second_monad->val());
     }
 
     public function testConstructor()
