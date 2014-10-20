@@ -102,7 +102,7 @@ var_dump($maybeNotEmptyString->val('empty', true));
 // 10. using 'map()' method of Maybe to adjust behaviour of (new) monad
 $luckyNumbers = new Maybe([1, 22, 45, 99]);
 $multipliedNumbers = $luckyNumbers->map(function($num) {
-    return new Maybe($num->val() * 100);
+    return $num->val() * 100;
 });
 
 var_dump($multipliedNumbers->val());

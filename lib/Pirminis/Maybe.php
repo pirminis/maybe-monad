@@ -18,7 +18,11 @@ class Maybe implements \ArrayAccess
      */
     public function __construct($subject)
     {
-        $this->subject = $subject;
+        if ($subject instanceof static) {
+            $this->subject = $subject->val(null);
+        } else {
+            $this->subject = $subject;
+        }
     }
 
     /**
@@ -30,10 +34,10 @@ class Maybe implements \ArrayAccess
     public function __call($method, $args)
     {
         if (!method_exists($this->subject, $method)) {
-            return new Maybe(null);
+            return new static(null);
         }
 
-        return new Maybe(call_user_func_array([$this->subject, $method], $args));
+        return new static(call_user_func_array([$this->subject, $method], $args));
     }
 
     /**
@@ -44,10 +48,10 @@ class Maybe implements \ArrayAccess
     public function __get($property)
     {
         if (!property_exists($this->subject, $property)) {
-            return new Maybe(null);
+            return new static(null);
         }
 
-        return new Maybe($this->subject->{$property});
+        return new static($this->subject->{$property});
     }
 
     /**
@@ -67,7 +71,7 @@ class Maybe implements \ArrayAccess
 
     public function offsetGet($offset)
     {
-        return new Maybe(isset($this->subject[$offset]) ?
+        return new static(isset($this->subject[$offset]) ?
                $this->subject[$offset] :
                null);
     }
@@ -89,16 +93,18 @@ class Maybe implements \ArrayAccess
 
     public function map(\Closure $closure)
     {
-        $result = [];
         $array = is_array($this->subject) ?
                  $this->subject :
                  [$this->subject];
 
         foreach ($array as $key => $value) {
-            $array[$key] = $closure(new Maybe($value), new Maybe($key))->val();
+            $closure_ret_val = $closure(new static($value), new static($key));
+            $array[$key] = $closure_ret_val instanceof static ?
+                           $closure_ret_val->val() :
+                           $closure_ret_val;
         }
 
-        return new Maybe(is_array($this->subject) ? $array : $array[0]);
+        return new static(is_array($this->subject) ? $array : $array[0]);
     }
 
     public function some()

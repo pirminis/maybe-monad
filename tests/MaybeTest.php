@@ -6,6 +6,65 @@ use Pirminis\Maybe;
 
 class MaybeTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Law 1: map() acts approximately as a neutral element.
+     * monad(arg).map(f).val == f[arg]
+     */
+    public function testMonadLaw1()
+    {
+        $f = function($v) {
+            return (new Maybe($v))->val() * 10;
+        };
+
+        $arg = 17;
+        $monad = new Maybe($arg);
+
+        $this->assertSame($monad->map($f)->val(), $f($arg));
+    }
+
+    /**
+     * Law 2. monad(arg).map(f) is monad.
+     */
+    public function testMonadLaw2()
+    {
+        $f = function($v) {
+            return $v->val() * 100;
+        };
+
+        $monad = new Maybe(3.14);
+
+        $this->assertInstanceOf('\Pirminis\Maybe', $monad->map($f));
+    }
+
+    /**
+     * Law 3: monad(arg).map(f).map(g) == monad(arg).map(f=monad(arg).map(g))
+     */
+    public function testMonadLaw3()
+    {
+        $g = function($v) {
+            return new Maybe($v->val() / 100.0);
+        };
+
+        $f = function($v) {
+            return new Maybe($v->val() * 2.0);
+        };
+
+        $fg = function ($v) use ($f, $g) {
+            return $f($g($v));
+        };
+
+        $arg = 5000;
+        $expectedValue = $arg * 2.0 / 100.0;
+        $monad = new Maybe($arg);
+
+        $left = $monad->map($f)->map($g);
+        $right = $monad->map($fg);
+
+        $this->assertSame($expectedValue, $left->val());
+        $this->assertSame($expectedValue, $right->val());
+        $this->assertSame($left->val(), $right->val());
+    }
+
     public function testConstructor()
     {
         $maybe = new Maybe(null);
@@ -207,7 +266,7 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     {
         $age = new Maybe(28);
         $modifiedAge = $age->map(function($num) {
-            return new Maybe($num->val() * 10);
+            return $num->val() * 10;
         });
         $expectedValue = 280;
 
@@ -218,7 +277,7 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     {
         $ages = new Maybe([12, 28, 68]);
         $modifiedAge = $ages->map(function($num) {
-            return new Maybe($num->val() / 4.0);
+            return $num->val() / 4.0;
         });
         $expectedValues = [3.0, 7.0, 17.0];
 
@@ -234,14 +293,14 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $order = new Maybe(new Order(new User($expectedValue)));
 
         $name = $order->map(function($order) {
-            return $order->getUser()->map(function($user) {
-                return $user->getName()->map(function($name) {
+            return (new Maybe($order))->getUser()->map(function($user) {
+                return (new Maybe($user))->getName()->map(function($name) {
                     return $name;
                 });
             });
         });
         $name2 = $order->getUser()->getName()->map(function($name) use($expectedValue2) {
-            return new Maybe($expectedValue2);
+            return $expectedValue2;
         });
 
         $this->assertSame($expectedValue, $name->val());
@@ -250,15 +309,30 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
 
     public function testMapOnNullMonad()
     {
-        $expectedValue = 'some';
-        $expectedValue2 = 'none';
+        $some = 'some';
+        $none = 'none';
 
         $null = new Maybe(null);
-        $modifiedNull = $null->map(function($value) use ($expectedValue, $expectedValue2) {
-            return new Maybe($value->some() ? $expectedValue : $expectedValue2);
+        $modifiedNull = $null->map(function($value) use ($some, $none) {
+            return $value->some() ? $some : $none;
         });
 
-        $this->assertSame($expectedValue2, $modifiedNull->val());
+        $this->assertSame($none, $modifiedNull->val(null));
+
+        $notNull = new Maybe('something');
+        $modifiedNotNull = $notNull->map(function($value) use ($some, $none) {
+            return $value->some() ? $some : $none;
+        });
+
+        $this->assertSame($some, $modifiedNotNull->val());
+    }
+
+    public function testExtensionOfMaybeClass()
+    {
+        $expectedValue = 'John';
+        $name = new Option($expectedValue);
+
+        $this->assertSame($expectedValue, $name->val());
     }
 }
 
@@ -291,3 +365,5 @@ class Order
         return $this->user;
     }
 }
+
+class Option extends Maybe {};
