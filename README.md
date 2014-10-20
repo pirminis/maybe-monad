@@ -25,4 +25,4 @@ phpunit tests
 ```
 
 # Bugs?
-I `$maybeCare = new Maybe('that much'); echo $maybeCare->val('not that much');`
+`$how_much_I_care = \Maybe('that much'); echo $how_much_I_care->val('not that much');`

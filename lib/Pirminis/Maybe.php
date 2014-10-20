@@ -1,6 +1,21 @@
 <?php
 
-namespace Pirminis;
+// global namespace. ain't this hack ugly?
+namespace {
+
+use Pirminis\Maybe;
+
+function Maybe($val)
+{
+    if ($val instanceof \Pirminis\Maybe) return $val;
+    else return new Maybe($val);
+}
+
+}
+
+
+// actual namespace
+namespace Pirminis {
 
 /**
  * You have a variable, or a value. But you are not sure
@@ -116,4 +131,6 @@ class Maybe implements \ArrayAccess
     {
         return empty($this->subject);
     }
+}
+
 }
