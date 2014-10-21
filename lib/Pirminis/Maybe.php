@@ -1,27 +1,7 @@
 <?php
 
-// global namespace. ain't this hack ugly?
-namespace {
-
-use Pirminis\Maybe;
-use Pirminis\Some;
-use Pirminis\None;
-
-function Maybe($val)
-{
-    if ($val instanceof \Pirminis\Maybe) {
-        return $val;
-    } else {
-        if (is_null($val)) return new None();
-        else return new Some($val);
-    }
-}
-
-}
-
-
 // actual namespace
-namespace Pirminis {
+namespace Pirminis;
 
 /**
  * You have a variable, or a value. But you are not sure
@@ -115,6 +95,4 @@ abstract class Maybe implements \ArrayAccess
 
         return new static(is_array($this->subject) ? $array : $array[0]);
     }
-}
-
 }

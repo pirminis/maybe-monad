@@ -12,6 +12,9 @@ Composer:
 ```
 "require": {
     "pirminis/maybe-monad": "dev-master"
+},
+"autoload": {
+    "files": ["vendor/pirminis/maybe-monad/lib/global.php"]
 }
 ```
 

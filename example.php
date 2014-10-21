@@ -3,6 +3,7 @@
 require('lib/Pirminis/Maybe.php');
 require('lib/Pirminis/Some.php');
 require('lib/Pirminis/None.php');
+require('lib/global.php');
 
 // 1. simple value
 $maybeInteger = \Maybe(123);
