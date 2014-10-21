@@ -4,8 +4,6 @@ require('lib/Pirminis/Maybe.php');
 require('lib/Pirminis/Some.php');
 require('lib/Pirminis/None.php');
 
-use Pirminis\Maybe;
-
 // 1. simple value
 $maybeInteger = \Maybe(123);
 var_dump($maybeInteger->val());

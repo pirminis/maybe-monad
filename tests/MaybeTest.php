@@ -4,8 +4,6 @@ require('lib/Pirminis/Maybe.php');
 require('lib/Pirminis/Some.php');
 require('lib/Pirminis/None.php');
 
-use Pirminis\Maybe;
-
 class MaybeTest extends \PHPUnit_Framework_TestCase
 {
     /**
