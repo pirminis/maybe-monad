@@ -319,6 +319,16 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($some, $modifiedNotNull->val());
     }
+
+    public function testNullValueIsInstanceOfNone()
+    {
+        $this->assertSame('Pirminis\None', get_class(\Maybe(null)));
+    }
+
+    public function testNonNullValueIsInstanceOfSome()
+    {
+        $this->assertSame('Pirminis\Some', get_class(\Maybe(23)));
+    }
 }
 
 class User
