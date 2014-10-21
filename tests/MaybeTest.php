@@ -1,6 +1,8 @@
 <?php
 
 require('lib/Pirminis/Maybe.php');
+require('lib/Pirminis/Some.php');
+require('lib/Pirminis/None.php');
 
 use Pirminis\Maybe;
 
@@ -211,50 +213,50 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedValue, $maybeArray['person']['name']->val());
     }
 
-    public function testSome()
+    public function testIsSome()
     {
         $expectedValue = true;
         $data = '';
 
-        $this->assertSame($expectedValue, \Maybe($data)->some());
+        $this->assertSame($expectedValue, \Maybe($data)->is_some());
 
         $expectedValue = true;
         $data = 'hello world!';
 
-        $this->assertSame($expectedValue, \Maybe($data)->some());
+        $this->assertSame($expectedValue, \Maybe($data)->is_some());
 
         $expectedValue = true;
         $data = false;
 
-        $this->assertSame($expectedValue, \Maybe($data)->some());
+        $this->assertSame($expectedValue, \Maybe($data)->is_some());
 
         $expectedValue = false;
         $data = null;
 
-        $this->assertSame($expectedValue, \Maybe($data)->some());
+        $this->assertSame($expectedValue, \Maybe($data)->is_some());
     }
 
-    public function testNone()
+    public function testIsNone()
     {
-        $expectedValue = true;
+        $expectedValue = false;
         $data = '';
 
-        $this->assertSame($expectedValue, \Maybe($data)->none());
+        $this->assertSame($expectedValue, \Maybe($data)->is_none());
 
         $expectedValue = false;
         $data = 'hello world!';
 
-        $this->assertSame($expectedValue, \Maybe($data)->none());
+        $this->assertSame($expectedValue, \Maybe($data)->is_none());
 
-        $expectedValue = true;
+        $expectedValue = false;
         $data = false;
 
-        $this->assertSame($expectedValue, \Maybe($data)->none());
+        $this->assertSame($expectedValue, \Maybe($data)->is_none());
 
         $expectedValue = true;
         $data = null;
 
-        $this->assertSame($expectedValue, \Maybe($data)->none());
+        $this->assertSame($expectedValue, \Maybe($data)->is_none());
     }
 
     public function testSimpleMap()
@@ -306,24 +308,16 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $none = 'none';
 
         $modifiedNull = \Maybe(null)->map(function($value) use ($some, $none) {
-            return $value->some() ? $some : $none;
+            return $value->is_some() ? $some : $none;
         });
 
-        $this->assertSame($none, $modifiedNull->val(null));
+        $this->assertSame($none, $modifiedNull->val($none));
 
         $modifiedNotNull = \Maybe('something')->map(function($value) use ($some, $none) {
-            return $value->some() ? $some : $none;
+            return $value->is_some() ? $some : $none;
         });
 
         $this->assertSame($some, $modifiedNotNull->val());
-    }
-
-    public function testExtensionOfMaybeClass()
-    {
-        $expectedValue = 'John';
-        $name = new Option($expectedValue);
-
-        $this->assertSame($expectedValue, $name->val());
     }
 }
 
@@ -356,5 +350,3 @@ class Order
         return $this->user;
     }
 }
-
-class Option extends Maybe {};

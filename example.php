@@ -1,6 +1,8 @@
 <?php
 
 require('lib/Pirminis/Maybe.php');
+require('lib/Pirminis/Some.php');
+require('lib/Pirminis/None.php');
 
 use Pirminis\Maybe;
 
@@ -133,16 +135,16 @@ var_dump($name->val());
 // string(11) "Got name..."
 // string(4) "John"
 
-// 11. you can also use methods 'some()' and 'none()' to simple test if
+// 11. you can also use methods 'is_some()' and 'is_none()' to simple test if
 // monad's value is set (some) or empty (none)
 $name = \Maybe(null);
-var_dump($name->some());
+var_dump($name->is_some());
 // bool(false)
-var_dump($name->none());
+var_dump($name->is_none());
 // bool(true)
 
 $age = \Maybe(28);
-var_dump($age->some());
+var_dump($age->is_some());
 // bool(true)
-var_dump($age->none());
+var_dump($age->is_none());
 // bool(false)

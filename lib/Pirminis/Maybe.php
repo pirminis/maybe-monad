@@ -4,11 +4,17 @@
 namespace {
 
 use Pirminis\Maybe;
+use Pirminis\Some;
+use Pirminis\None;
 
 function Maybe($val)
 {
-    if ($val instanceof \Pirminis\Maybe) return $val;
-    else return new Maybe($val);
+    if ($val instanceof \Pirminis\Maybe) {
+        return $val;
+    } else {
+        if (is_null($val)) return new None();
+        else return new Some($val);
+    }
 }
 
 }
@@ -24,21 +30,9 @@ namespace Pirminis {
  *
  * Handles chainable callabes like I handle your mom.
  */
-class Maybe implements \ArrayAccess
+abstract class Maybe implements \ArrayAccess
 {
     protected $subject;
-
-    /**
-     * Assign test subject.
-     */
-    public function __construct($subject)
-    {
-        if ($subject instanceof static) {
-            $this->subject = $subject->val(null);
-        } else {
-            $this->subject = $subject;
-        }
-    }
 
     /**
      * For situations with [chainable] callables.
@@ -120,16 +114,6 @@ class Maybe implements \ArrayAccess
         }
 
         return new static(is_array($this->subject) ? $array : $array[0]);
-    }
-
-    public function some()
-    {
-        return !is_null($this->subject);
-    }
-
-    public function none()
-    {
-        return empty($this->subject);
     }
 }
 
