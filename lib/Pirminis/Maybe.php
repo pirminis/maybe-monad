@@ -23,10 +23,10 @@ abstract class Maybe implements \ArrayAccess
     public function __call($method, $args)
     {
         if (!method_exists($this->subject, $method)) {
-            return new static(null);
+            return \Maybe(null);
         }
 
-        return new static(call_user_func_array([$this->subject, $method], $args));
+        return \Maybe(call_user_func_array([$this->subject, $method], $args));
     }
 
     /**
@@ -37,10 +37,10 @@ abstract class Maybe implements \ArrayAccess
     public function __get($property)
     {
         if (!property_exists($this->subject, $property)) {
-            return new static(null);
+            return \Maybe(null);
         }
 
-        return new static($this->subject->{$property});
+        return \Maybe($this->subject->{$property});
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class Maybe implements \ArrayAccess
 
     public function offsetGet($offset)
     {
-        return new static(isset($this->subject[$offset]) ?
+        return \Maybe(isset($this->subject[$offset]) ?
                $this->subject[$offset] :
                null);
     }
@@ -87,12 +87,12 @@ abstract class Maybe implements \ArrayAccess
                  [$this->subject];
 
         foreach ($array as $key => $value) {
-            $closure_ret_val = $closure(new static($value), new static($key));
+            $closure_ret_val = $closure(\Maybe($value), \Maybe($key));
             $array[$key] = $closure_ret_val instanceof static ?
                            $closure_ret_val->val() :
                            $closure_ret_val;
         }
 
-        return new static(is_array($this->subject) ? $array : $array[0]);
+        return \Maybe(is_array($this->subject) ? $array : $array[0]);
     }
 }
