@@ -7,7 +7,7 @@ use Pirminis\Maybe;
 use Pirminis\Some;
 use Pirminis\None;
 
-function Maybe($val)
+function Maybe($val = null)
 {
     if ($val instanceof \Pirminis\Maybe) {
         return $val;

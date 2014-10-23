@@ -23,7 +23,7 @@ abstract class Maybe implements \ArrayAccess
     public function __call($method, $args)
     {
         if (!method_exists($this->subject, $method)) {
-            return \Maybe(null);
+            return \Maybe();
         }
 
         return \Maybe(call_user_func_array([$this->subject, $method], $args));
@@ -37,7 +37,7 @@ abstract class Maybe implements \ArrayAccess
     public function __get($property)
     {
         if (!property_exists($this->subject, $property)) {
-            return \Maybe(null);
+            return \Maybe();
         }
 
         return \Maybe($this->subject->{$property});
@@ -49,7 +49,7 @@ abstract class Maybe implements \ArrayAccess
      * @param  boolean $use_empty  Should we use 'empty' instead of 'isset'?
      * @return mixed
      */
-    public function val($default = '', $use_empty = false)
+    public function val($default = null, $use_empty = false)
     {
         if ($use_empty) {
             return empty($this->subject) ? $default : $this->subject;
@@ -89,7 +89,7 @@ abstract class Maybe implements \ArrayAccess
         foreach ($array as $key => $value) {
             $closure_ret_val = $closure(\Maybe($value), \Maybe($key));
             $array[$key] = $closure_ret_val instanceof static ?
-                           $closure_ret_val->val() :
+                           $closure_ret_val->val(null) :
                            $closure_ret_val;
         }
 

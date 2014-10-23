@@ -8,37 +8,67 @@ require('lib/global.php');
 class MaybeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Law 1: map() acts approximately as a neutral element.
-     * monad(arg).map(f).val == f[arg]
+     * Law 1: left identity.
+     *  - monad(arg).map(f) is monad
+     *  - monad(arg).map(f) == monad(f(arg))
      */
     public function testMonadLaw1()
     {
         $f = function($v) {
             // why "\Maybe($v)" and not just "$v"?
             // because we will use "$f" as if it had nothing to do with monads.
-            return \Maybe($v)->val() * 10;
+            $number = \Maybe($v);
+            return $number->is_some() ? \Maybe($v)->val() * 10 : \Maybe();
         };
 
-        $arg = 17;
+        // with some value
+        $age = 28;
+        $left = \Maybe($age)->map($f);
+        $right = \Maybe($f($age));
 
-        $this->assertSame(\Maybe($arg)->map($f)->val(), $f($arg));
+        $this->assertInstanceOf('\Pirminis\Some', $left->map($f));
+        $this->assertInstanceOf('\Pirminis\Some', $right);
+        $this->assertSame($left->val(), $right->val());
+
+        // with none value
+        $age = null;
+        $left = \Maybe($age)->map($f);
+        $right = \Maybe($f($age));
+
+        $this->assertInstanceOf('\Pirminis\None', $left->map($f));
+        $this->assertInstanceOf('\Pirminis\None', $right);
+        $this->assertSame($left->val(), $right->val());
     }
 
     /**
-     * Law 2. monad(arg).map(f) is monad.
+     * Law 2. right identity.
+     *  - monad(arg).map(function(v) { return v }) == monad(arg)
      */
     public function testMonadLaw2()
     {
         $f = function($v) {
-            return $v->val() * 100;
+            return $v->is_some() ? $v->val() * 100 : \Maybe();
         };
 
-        $this->assertInstanceOf('\Pirminis\Maybe', \Maybe(3.14)->map($f));
+        $g = function($v) {
+            return $v;
+        };
+
+        $this->assertInstanceOf('\Pirminis\Some', \Maybe(3.14)->map($f));
+        $this->assertInstanceOf('\Pirminis\None', \Maybe()->map($f));
+
+        // or
+
+        $this->assertInstanceOf('\Pirminis\Some', \Maybe(3.14)->map($g));
+        $this->assertInstanceOf('\Pirminis\None', \Maybe()->map($g));
+        $this->assertSame(3.14, \Maybe(3.14)->map($g)->val(null));
+        $this->assertSame(null, \Maybe()->map($g)->val(null));
     }
 
     /**
-     * Law 3: monad(arg).map(f).map(g) == monad(arg).map(f(g))
-     * map(f) is monad, map(g) is monad, hence map(f(g)) is monad.
+     * Law 3: associativity.
+     *  - monad(arg).map(f).map(g) == monad(arg).map(f(g))
+     *  - map(f) is monad, map(g) is monad, map(f(g)) is monad.
      */
     public function testMonadLaw3()
     {
@@ -64,8 +94,8 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedValue, $left->val());
         $this->assertSame($expectedValue, $right->val());
         $this->assertSame($left->val(), $right->val());
-        $this->assertInstanceOf('\Pirminis\Maybe', $left);
-        $this->assertInstanceOf('\Pirminis\Maybe', $right);
+        $this->assertInstanceOf('\Pirminis\Some', $left);
+        $this->assertInstanceOf('\Pirminis\Some', $right);
     }
 
     public function testConstructingMonadFromMonadWillGiveMonad()
@@ -76,27 +106,27 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $second_monad = \Maybe($first_monad);
 
         $this->assertSame($first_monad, $second_monad);
+        $this->assertSame($first_monad->val(), $second_monad->val());
     }
 
     public function testConstructor()
     {
-        $maybe = \Maybe(null);
-
-        $this->assertInstanceOf('Pirminis\Maybe', $maybe);
+        $this->assertInstanceOf('Pirminis\None', \Maybe());
     }
 
     public function testEmptyValue()
     {
         $expectedValue = 'no name';
 
-        $this->assertSame($expectedValue, \Maybe(null)->val('no name'));
+        $this->assertSame($expectedValue, \Maybe()->val($expectedValue));
     }
 
     public function testStringValue()
     {
         $expectedValue = 'John';
 
-        $this->assertSame($expectedValue, \Maybe($expectedValue)->val('no name'));
+        $this->assertSame($expectedValue,
+                          \Maybe($expectedValue)->val('no name'));
     }
 
     public function testIntegerValue()
@@ -124,7 +154,8 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     {
         $expectedValue = new stdClass();
 
-        $this->assertSame($expectedValue, \Maybe($expectedValue)->val(new stdClass()));
+        $this->assertSame($expectedValue,
+                          \Maybe($expectedValue)->val(new stdClass()));
     }
 
     public function testImmutability()
@@ -132,8 +163,9 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $expectedValue = new stdClass();
         $expectedObjectHash = spl_object_hash($expectedValue);
 
-        $this->assertSame($expectedObjectHash,
-                          spl_object_hash(\Maybe($expectedValue)->val(new stdClass())));
+        $this->assertSame(
+            $expectedObjectHash,
+            spl_object_hash(\Maybe($expectedValue)->val(new stdClass())));
     }
 
     public function testInexistingMethod()
@@ -141,7 +173,7 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $expectedValue = 'no name';
 
         $this->assertSame($expectedValue,
-                          \Maybe(null)->getName()->val($expectedValue));
+                          \Maybe()->getName()->val($expectedValue));
     }
 
     public function testExistingMethod()
@@ -155,10 +187,11 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     public function testInexistingMethodChain()
     {
         $expectedValue = 'no name';
-        $order = \Maybe(null);
 
         $this->assertSame($expectedValue,
-                          $order->getUser()->getName()->val($expectedValue));
+                          \Maybe()->getUser()
+                                  ->getName()
+                                  ->val($expectedValue));
     }
 
     public function testExistingMethodChain()
@@ -182,13 +215,16 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
     {
         $expectedValue = 'value is empty';
 
-        $this->assertSame($expectedValue, \Maybe('')->val($expectedValue, true));
+        $this->assertSame($expectedValue,
+                          \Maybe('')->val($expectedValue, true));
     }
 
     public function testClosure()
     {
         $expectedValue = 'oh yeah!';
-        $expectedCallback = function() use ($expectedValue) { return $expectedValue; };
+        $expectedCallback = function() use ($expectedValue) {
+            return $expectedValue;
+        };
         $callback = \Maybe($expectedCallback);
 
         $this->assertInstanceOf('\Closure', $callback->val());
@@ -198,8 +234,8 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
 
     public function testEmptyArray()
     {
-        $expectedValue = '';
-        $maybeArray = \Maybe(null);
+        $expectedValue = null;
+        $maybeArray = \Maybe();
 
         $this->assertSame($expectedValue, $maybeArray['name']->val());
     }
@@ -293,9 +329,10 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
                 });
             });
         });
-        $name2 = $order->getUser()->getName()->map(function($name) use($expectedValue2) {
-            return $expectedValue2;
-        });
+        $name2 = $order->getUser()
+                       ->getName()
+                       ->map(function($name) use($expectedValue2) {
+                           return $expectedValue2; });
 
         $this->assertSame($expectedValue, $name->val());
         $this->assertSame($expectedValue2, $name2->val());
@@ -306,22 +343,22 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
         $some = 'some';
         $none = 'none';
 
-        $modifiedNull = \Maybe(null)->map(function($value) use ($some, $none) {
+        $modifiedNull = \Maybe()->map(function($value) use ($some, $none) {
             return $value->is_some() ? $some : $none;
         });
 
         $this->assertSame($none, $modifiedNull->val($none));
 
-        $modifiedNotNull = \Maybe('something')->map(function($value) use ($some, $none) {
-            return $value->is_some() ? $some : $none;
-        });
+        $modifiedNotNull = \Maybe('something')->map(
+            function($value) use ($some, $none) {
+                return $value->is_some() ? $some : $none; });
 
         $this->assertSame($some, $modifiedNotNull->val());
     }
 
     public function testNullValueIsInstanceOfNone()
     {
-        $this->assertSame('Pirminis\None', get_class(\Maybe(null)));
+        $this->assertSame('Pirminis\None', get_class(\Maybe()));
     }
 
     public function testNonNullValueIsInstanceOfSome()

@@ -18,7 +18,7 @@ var_dump($maybeArray['oh, oh.']['what']->val('nope'));
 // result: string(4) "nope"
 
 // 3. simple value that is null
-var_dump(\Maybe(null)->val(0));
+var_dump(\Maybe()->val(0));
 // result: int(0)
 
 
@@ -80,7 +80,7 @@ var_dump(\Maybe($order)->getUser()->getName()->val('no value'));
 
 
 // 8. chaining non existing methods
-var_dump(\Maybe(null)->getUser()->getName()->val('no value'));
+var_dump(\Maybe()->getUser()->getName()->val('no value'));
 // result: string(8) "no value"
 
 
@@ -136,7 +136,7 @@ var_dump($name->val());
 
 // 11. you can also use methods 'is_some()' and 'is_none()' to simple test if
 // monad's value is set (some) or empty (none)
-$name = \Maybe(null);
+$name = \Maybe();
 var_dump($name->is_some());
 // bool(false)
 var_dump($name->is_none());

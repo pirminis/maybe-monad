@@ -1,17 +1,17 @@
 maybe-monad
 ===========
 
-Simple monad library for PHP. Makes your life easier by making your code safer.
+Simple `Maybe` monad library for `PHP`. Makes your life easier by making your code safer and by keeping your code stylish.
 
-# Principle
-When accessing values, variables, properties, calling methods or even chaining methods you usually don't know if subject of operation is null or not. That's is where my library comes. What you need to do is just wrap your subject around with class called `Maybe` and at the endpoint call method `value()`.
+# What is this library about
+Graceful handling of `null` values.
 
 # Installation
 Composer:
 
 ```
 "require": {
-    "pirminis/maybe-monad": "dev-master"
+    "pirminis/maybe-monad": "~1.2"
 },
 "autoload": {
     "files": ["vendor/pirminis/maybe-monad/lib/global.php"]
@@ -19,7 +19,11 @@ Composer:
 ```
 
 # Examples
-Dont be a jerk and check `example.php`, it is simple and easy to understand.
+Dont be a jerk and check `example.php`, it is simple and easy to understand:
+
+```
+php example.php
+```
 
 # Tests
 Use phpunit in project folder:
