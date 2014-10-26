@@ -89,7 +89,7 @@ abstract class Maybe implements \ArrayAccess
         foreach ($array as $key => $value) {
             $closure_ret_val = $closure(\Maybe($value), \Maybe($key));
             $array[$key] = $closure_ret_val instanceof static ?
-                           $closure_ret_val->val(null) :
+                           $closure_ret_val->val() :
                            $closure_ret_val;
         }
 

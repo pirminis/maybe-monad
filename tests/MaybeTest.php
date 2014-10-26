@@ -61,8 +61,8 @@ class MaybeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('\Pirminis\Some', \Maybe(3.14)->map($g));
         $this->assertInstanceOf('\Pirminis\None', \Maybe()->map($g));
-        $this->assertSame(3.14, \Maybe(3.14)->map($g)->val(null));
-        $this->assertSame(null, \Maybe()->map($g)->val(null));
+        $this->assertSame(3.14, \Maybe(3.14)->map($g)->val());
+        $this->assertSame(null, \Maybe()->map($g)->val());
     }
 
     /**
